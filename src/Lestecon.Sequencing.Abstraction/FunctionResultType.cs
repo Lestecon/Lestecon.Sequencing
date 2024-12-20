@@ -1,4 +1,4 @@
-namespace Lestecon.Sequencing.Abstraction;
+namespace Lestecon.Sequencing;
 
 public enum FunctionResultType : byte
 {

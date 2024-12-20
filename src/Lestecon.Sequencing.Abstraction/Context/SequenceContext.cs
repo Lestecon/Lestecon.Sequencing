@@ -1,7 +1,8 @@
 using Microsoft.Extensions.Logging;
 using System.Reflection;
 
-namespace Lestecon.Sequencing.Abstraction.Context;
+namespace Lestecon.Sequencing;
+
 public class SequenceContext : ISequenceContext
 {
     public SequenceContext(ILogger logger)

@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace Lestecon.Sequencing.Abstraction.Context;
+namespace Lestecon.Sequencing;
 
 public interface ISequenceContext
 {

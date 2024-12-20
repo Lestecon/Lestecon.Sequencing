@@ -1,6 +1,7 @@
 using FluentResults;
 
-namespace Lestecon.Sequencing.Abstraction;
+namespace Lestecon.Sequencing;
+
 public interface IFunctionResult : IResult<object>
 {
     FunctionResultType Type { get; }

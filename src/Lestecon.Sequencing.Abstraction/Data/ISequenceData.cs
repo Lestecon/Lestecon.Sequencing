@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace Lestecon.Sequencing.Abstraction.Data;
+namespace Lestecon.Sequencing;
 
 public interface ISequenceData
 {
