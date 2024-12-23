@@ -199,14 +199,6 @@ public class Sequence<TSequenceContext, TSequenceData> :
                 break;
             }
 
-            if (result?.ValueOrDefault == null)
-            {
-                string message = $"Sequence '{Name}' contains no response; " +
-                    $"last function '{functionName ?? lastFunctionName ?? "none"}'; {sequenceData.CorrelationKey}";
-                Logger.LogError(message);
-                throw new InvalidOperationException(message);
-            }
-
             if (sequenceStopwatch.Elapsed.TotalMilliseconds > 1000)
             {
                 Logger.LogInformation($"Sequence '{Name}' ended after {sequenceStopwatch.Elapsed.TotalMilliseconds} ms; " +
