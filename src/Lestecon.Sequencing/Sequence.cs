@@ -38,7 +38,7 @@ public class Sequence<TSequenceContext, TSequenceData> :
 
     /// <summary>Gets the sequence functions.</summary>
     /// <value>The sequence functions.</value>
-    private SequenceFunctionDictionary<TSequenceContext, TSequenceData> SequenceFunctions { get; } = [];
+    private Dictionary<string, Func<TSequenceContext, TSequenceData, ValueTask<IFunctionResult>>> SequenceFunctions { get; } = [];
 
     /// <summary>
     /// Invokes the current sequence as a sequence function with the specified sequence context and sequence data.
@@ -118,8 +118,15 @@ public class Sequence<TSequenceContext, TSequenceData> :
     {
         ArgumentNullException.ThrowIfNull(function);
 
-        SequenceFunctions.SetInitiationFunctionName(functionName, ref initiationFunctionName);
-        SequenceFunctions.AddIfMissing(functionName, function);
+        if (SequenceFunctions.Count == 0)
+        {
+            initiationFunctionName = functionName;
+        }
+
+        if (!SequenceFunctions.ContainsKey(functionName))
+        {
+            SequenceFunctions[functionName] = function;
+        }
 
         return SequenceBranches[functionName] = new SequenceBranch<TSequenceContext, TSequenceData>(this);
     }
