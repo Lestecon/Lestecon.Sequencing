@@ -4,6 +4,6 @@ public enum FunctionResultType : byte
 {
     True,
     False,
-    Ambivalent,
+    Indeterminate,
     Abort
 }

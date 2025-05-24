@@ -2,11 +2,18 @@ using Lestecon.Sequencing.Abstraction;
 
 namespace Lestecon.Sequencing;
 
-public class SequenceBuilderBranch<TSequenceContext, TSequenceData>(
-    SequenceBuilder<TSequenceContext, TSequenceData> builder)
+public class SequenceBuilderBranch<TSequenceContext, TSequenceData>
     where TSequenceContext : ISequenceContext
     where TSequenceData : ISequenceData
 {
+    private readonly SequenceBuilder<TSequenceContext, TSequenceData> builder;
+
+    internal SequenceBuilderBranch(
+        SequenceBuilder<TSequenceContext, TSequenceData> builder)
+    {
+        this.builder = builder;
+    }
+
     public string? OnAbortFunctionName { get; private set; }
     public string? OnAnyFunctionName { get; private set; }
     public string? OnFalseFunctionName { get; private set; }

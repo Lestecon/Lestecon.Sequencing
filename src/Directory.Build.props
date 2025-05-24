@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
     <PackageId>$(MSBuildAssemblyName)</PackageId>
-    <Version>9.0.1</Version>
+    <Version>9.1.0</Version>
     <Authors>Lestecon</Authors>
     <Company>Lestecon</Company>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
