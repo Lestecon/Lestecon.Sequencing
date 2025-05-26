@@ -14,7 +14,7 @@ public class SequenceBuilder<TSequenceContext, TSequenceData>
     where TSequenceData : ISequenceData
 {
     private readonly Dictionary<string, SequenceBuilderBranch<TSequenceContext, TSequenceData>> branches = [];
-    private readonly Dictionary<string, Func<TSequenceContext, TSequenceData, ValueTask<IFunctionResult>>> functions = [];
+    private readonly Dictionary<string, Func<TSequenceContext, TSequenceData, ValueTask<FunctionResult>>> functions = [];
 
     internal SequenceBuilder()
     {
@@ -34,11 +34,11 @@ public class SequenceBuilder<TSequenceContext, TSequenceData>
         Register<TSequenceFunction>(functionName);
 
     public SequenceBuilderBranch<TSequenceContext, TSequenceData> StartWith(
-        Func<TSequenceContext, TSequenceData, ValueTask<IFunctionResult>> function) =>
+        Func<TSequenceContext, TSequenceData, ValueTask<FunctionResult>> function) =>
         Register(function);
 
     public SequenceBuilderBranch<TSequenceContext, TSequenceData> StartWith(
-        Func<TSequenceContext, TSequenceData, ValueTask<IFunctionResult>> function,
+        Func<TSequenceContext, TSequenceData, ValueTask<FunctionResult>> function,
         string functionName) =>
         Register(function, functionName);
 
@@ -54,7 +54,7 @@ public class SequenceBuilder<TSequenceContext, TSequenceData>
         Register(new TSequenceFunction().Invoke, typeof(TSequenceFunction).Name + (functionName ?? string.Empty));
 
     internal SequenceBuilderBranch<TSequenceContext, TSequenceData> Register(
-        Func<TSequenceContext, TSequenceData, ValueTask<IFunctionResult>> function)
+        Func<TSequenceContext, TSequenceData, ValueTask<FunctionResult>> function)
     {
         ArgumentNullException.ThrowIfNull(function);
 
@@ -62,7 +62,7 @@ public class SequenceBuilder<TSequenceContext, TSequenceData>
     }
 
     internal SequenceBuilderBranch<TSequenceContext, TSequenceData> Register(
-        Func<TSequenceContext, TSequenceData, ValueTask<IFunctionResult>> function,
+        Func<TSequenceContext, TSequenceData, ValueTask<FunctionResult>> function,
         string functionName)
     {
         ArgumentNullException.ThrowIfNull(function);
@@ -94,7 +94,7 @@ public class SequenceBuilder<TSequenceContext, TSequenceData>
         return BuildTree(initialFunctionName, initialFunction);
     }
 
-    private SequenceTree<TSequenceContext, TSequenceData> BuildTree(string functionName, Func<TSequenceContext, TSequenceData, ValueTask<IFunctionResult>> function)
+    private SequenceTree<TSequenceContext, TSequenceData> BuildTree(string functionName, Func<TSequenceContext, TSequenceData, ValueTask<FunctionResult>> function)
     {
         var tree = new SequenceTree<TSequenceContext, TSequenceData>(function);
 

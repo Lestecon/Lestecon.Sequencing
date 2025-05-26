@@ -3,7 +3,7 @@ using Lestecon.Sequencing.Abstraction;
 namespace Lestecon.Sequencing;
 
 internal class SequenceTree<TSequenceContext, TSequenceData>(
-    Func<TSequenceContext, TSequenceData, ValueTask<IFunctionResult>> function)
+    Func<TSequenceContext, TSequenceData, ValueTask<FunctionResult>> function)
     : ISequenceFunction<TSequenceContext, TSequenceData>
     where TSequenceContext : ISequenceContext
     where TSequenceData : ISequenceData
@@ -14,7 +14,7 @@ internal class SequenceTree<TSequenceContext, TSequenceData>(
     public SequenceTree<TSequenceContext, TSequenceData>? OnAnyFunction { get; set; }
     public Dictionary<Func<object, bool>, SequenceTree<TSequenceContext, TSequenceData>> OnValueFunctions { get; set; } = [];
 
-    public async ValueTask<IFunctionResult> Invoke(TSequenceContext sequenceContext, TSequenceData sequenceData)
+    public async ValueTask<FunctionResult> Invoke(TSequenceContext sequenceContext, TSequenceData sequenceData)
     {
         var result = await function.Invoke(sequenceContext, sequenceData);
 
@@ -23,7 +23,7 @@ internal class SequenceTree<TSequenceContext, TSequenceData>(
             FunctionResultType.True => OnTrueFunction,
             FunctionResultType.False => OnFalseFunction,
             FunctionResultType.Abort => OnAbortFunction,
-            FunctionResultType.Ambivalent => GetOnValueContinuation(result),
+            FunctionResultType.Indeterminate => GetOnValueContinuation(result),
             _ => null
         };
 

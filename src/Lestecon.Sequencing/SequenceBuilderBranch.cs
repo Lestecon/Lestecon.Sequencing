@@ -29,11 +29,11 @@ public class SequenceBuilderBranch<TSequenceContext, TSequenceData>
     /// The Method creates a sequence branch that will only be invoked when specified as a reaction to a result of another sequence function.
     /// </summary>
     public SequenceBuilderBranch<TSequenceContext, TSequenceData> After(
-        Func<TSequenceContext, TSequenceData, ValueTask<IFunctionResult>> function) =>
+        Func<TSequenceContext, TSequenceData, ValueTask<FunctionResult>> function) =>
         builder.Register(function);
 
     public SequenceBuilderBranch<TSequenceContext, TSequenceData> After(
-        Func<TSequenceContext, TSequenceData, ValueTask<IFunctionResult>> function,
+        Func<TSequenceContext, TSequenceData, ValueTask<FunctionResult>> function,
         string? functionName)
     {
         ArgumentNullException.ThrowIfNull(function);
@@ -52,9 +52,10 @@ public class SequenceBuilderBranch<TSequenceContext, TSequenceData>
 
     /// <summary>Adds the specified sequence.</summary>
     public SequenceBuilderBranch<TSequenceContext, TSequenceData> After(
-        ISequence<TSequenceContext, TSequenceData> sequence,
+        ISequenceFunction<TSequenceContext, TSequenceData> sequence,
         string? functionName = null)
     {
+        SKUSIT ATTRIBUT NEJAKY NA ZISKANIE NAZVU PREMENNEJ CO SA VLOZILA DO SEQUENCE JAK PRI ARGUMENTNULLEXCEPTION
         return sequence == null
             ? throw new ArgumentNullException(nameof(sequence))
             : builder.Register(sequence.Invoke, sequence.Name + (functionName ?? string.Empty));
@@ -65,7 +66,7 @@ public class SequenceBuilderBranch<TSequenceContext, TSequenceData>
     #region On True
 
     public SequenceBuilderBranch<TSequenceContext, TSequenceData> IfTrueRun(
-        Func<TSequenceContext, TSequenceData, ValueTask<IFunctionResult>> function,
+        Func<TSequenceContext, TSequenceData, ValueTask<FunctionResult>> function,
         string? functionName = null)
     {
         ArgumentNullException.ThrowIfNull(function);
@@ -89,7 +90,7 @@ public class SequenceBuilderBranch<TSequenceContext, TSequenceData>
     }
 
     public SequenceBuilderBranch<TSequenceContext, TSequenceData> IfTrueRun(
-        ISequence<TSequenceContext, TSequenceData> sequence,
+        ISequenceFunction<TSequenceContext, TSequenceData> sequence,
         string? functionName = null)
     {
         ArgumentNullException.ThrowIfNull(sequence);
@@ -104,7 +105,7 @@ public class SequenceBuilderBranch<TSequenceContext, TSequenceData>
     #region On False
 
     public SequenceBuilderBranch<TSequenceContext, TSequenceData> IfFalseRun(
-        Func<TSequenceContext, TSequenceData, ValueTask<IFunctionResult>> function,
+        Func<TSequenceContext, TSequenceData, ValueTask<FunctionResult>> function,
         string? functionName = null)
     {
         ArgumentNullException.ThrowIfNull(function);
@@ -128,7 +129,7 @@ public class SequenceBuilderBranch<TSequenceContext, TSequenceData>
     }
 
     public SequenceBuilderBranch<TSequenceContext, TSequenceData> IfFalseRun(
-        ISequence<TSequenceContext, TSequenceData> sequence,
+        ISequenceFunction<TSequenceContext, TSequenceData> sequence,
         string? functionName = null)
     {
         ArgumentNullException.ThrowIfNull(sequence);
@@ -143,7 +144,7 @@ public class SequenceBuilderBranch<TSequenceContext, TSequenceData>
     #region On Abort
 
     public SequenceBuilderBranch<TSequenceContext, TSequenceData> IfAbortRun(
-        Func<TSequenceContext, TSequenceData, ValueTask<IFunctionResult>> function,
+        Func<TSequenceContext, TSequenceData, ValueTask<FunctionResult>> function,
         string? functionName = null)
     {
         ArgumentNullException.ThrowIfNull(function);
@@ -167,7 +168,7 @@ public class SequenceBuilderBranch<TSequenceContext, TSequenceData>
     }
 
     public SequenceBuilderBranch<TSequenceContext, TSequenceData> IfAbortRun(
-        ISequence<TSequenceContext, TSequenceData> sequence,
+        ISequenceFunction<TSequenceContext, TSequenceData> sequence,
         string? functionName = null)
     {
         ArgumentNullException.ThrowIfNull(sequence);
@@ -187,7 +188,7 @@ public class SequenceBuilderBranch<TSequenceContext, TSequenceData>
     /// </summary>
     public SequenceBuilderBranch<TSequenceContext, TSequenceData> IfValueRun(
         Func<object, bool> predicate,
-        Func<TSequenceContext, TSequenceData, ValueTask<IFunctionResult>> function,
+        Func<TSequenceContext, TSequenceData, ValueTask<FunctionResult>> function,
         string? functionName = null)
     {
         ArgumentNullException.ThrowIfNull(function);
@@ -217,7 +218,7 @@ public class SequenceBuilderBranch<TSequenceContext, TSequenceData>
         IfValueRun<TSequenceFunction>(x => true, functionName);
 
     public SequenceBuilderBranch<TSequenceContext, TSequenceData> IfValueElseRun(
-        Func<TSequenceContext, TSequenceData, ValueTask<IFunctionResult>> function,
+        Func<TSequenceContext, TSequenceData, ValueTask<FunctionResult>> function,
         string? functionName = null) =>
         IfValueRun(x => true, function, functionName);
 
@@ -230,7 +231,7 @@ public class SequenceBuilderBranch<TSequenceContext, TSequenceData>
     /// The specified function will be called on any parent function result type.
     /// </summary>
     public SequenceBuilderBranch<TSequenceContext, TSequenceData> IfAnyRun(
-        Func<TSequenceContext, TSequenceData, ValueTask<IFunctionResult>> function)
+        Func<TSequenceContext, TSequenceData, ValueTask<FunctionResult>> function)
     {
         builder.Register(function);
         OnAnyFunctionName = function.Method.Name;
@@ -238,7 +239,7 @@ public class SequenceBuilderBranch<TSequenceContext, TSequenceData>
     }
 
     public SequenceBuilderBranch<TSequenceContext, TSequenceData> IfAnyRun(
-        Func<TSequenceContext, TSequenceData, ValueTask<IFunctionResult>> function,
+        Func<TSequenceContext, TSequenceData, ValueTask<FunctionResult>> function,
         string functionName)
     {
         builder.Register(function, functionName);
@@ -260,7 +261,7 @@ public class SequenceBuilderBranch<TSequenceContext, TSequenceData>
     }
 
     public SequenceBuilderBranch<TSequenceContext, TSequenceData> IfAnyRun(
-        ISequence<TSequenceContext, TSequenceData> sequence,
+        ISequenceFunction<TSequenceContext, TSequenceData> sequence,
         string? functionName = null)
     {
         ArgumentNullException.ThrowIfNull(sequence);
