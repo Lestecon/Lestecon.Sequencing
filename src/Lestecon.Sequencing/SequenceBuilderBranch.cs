@@ -55,10 +55,9 @@ public class SequenceBuilderBranch<TSequenceContext, TSequenceData>
         ISequenceFunction<TSequenceContext, TSequenceData> sequence,
         string? functionName = null)
     {
-        SKUSIT ATTRIBUT NEJAKY NA ZISKANIE NAZVU PREMENNEJ CO SA VLOZILA DO SEQUENCE JAK PRI ARGUMENTNULLEXCEPTION
         return sequence == null
             ? throw new ArgumentNullException(nameof(sequence))
-            : builder.Register(sequence.Invoke, sequence.Name + (functionName ?? string.Empty));
+            : builder.Register(sequence.Invoke, sequence.FunctionName + (functionName ?? string.Empty));
     }
 
     #endregion
@@ -95,7 +94,7 @@ public class SequenceBuilderBranch<TSequenceContext, TSequenceData>
     {
         ArgumentNullException.ThrowIfNull(sequence);
 
-        OnTrueFunctionName = sequence.Name + (functionName ?? string.Empty);
+        OnTrueFunctionName = sequence.FunctionName + (functionName ?? string.Empty);
         builder.Register(sequence.Invoke, OnTrueFunctionName);
         return this;
     }
@@ -134,7 +133,7 @@ public class SequenceBuilderBranch<TSequenceContext, TSequenceData>
     {
         ArgumentNullException.ThrowIfNull(sequence);
 
-        OnFalseFunctionName = sequence.Name + (functionName ?? string.Empty);
+        OnFalseFunctionName = sequence.FunctionName + (functionName ?? string.Empty);
         builder.Register(sequence.Invoke, OnFalseFunctionName);
         return this;
     }
@@ -173,7 +172,7 @@ public class SequenceBuilderBranch<TSequenceContext, TSequenceData>
     {
         ArgumentNullException.ThrowIfNull(sequence);
 
-        OnAbortFunctionName = sequence.Name + (functionName ?? string.Empty);
+        OnAbortFunctionName = sequence.FunctionName + (functionName ?? string.Empty);
         builder.Register(sequence.Invoke, OnAbortFunctionName);
         return this;
     }
@@ -266,7 +265,7 @@ public class SequenceBuilderBranch<TSequenceContext, TSequenceData>
     {
         ArgumentNullException.ThrowIfNull(sequence);
 
-        OnAnyFunctionName = sequence.Name + (functionName ?? string.Empty);
+        OnAnyFunctionName = sequence.FunctionName + (functionName ?? string.Empty);
         builder.Register(sequence.Invoke, OnAnyFunctionName);
         return this;
     }
