@@ -2,17 +2,29 @@ using Lestecon.Sequencing.Abstraction;
 
 namespace Lestecon.Sequencing;
 
-internal class SequenceTree<TSequenceContext, TSequenceData>(
-    Func<TSequenceContext, TSequenceData, ValueTask<FunctionResult>> function)
+internal class SequenceBranch<TSequenceContext, TSequenceData>
     : ISequenceFunction<TSequenceContext, TSequenceData>
     where TSequenceContext : ISequenceContext
     where TSequenceData : ISequenceData
 {
-    public SequenceTree<TSequenceContext, TSequenceData>? OnTrueFunction { get; set; }
-    public SequenceTree<TSequenceContext, TSequenceData>? OnFalseFunction { get; set; }
-    public SequenceTree<TSequenceContext, TSequenceData>? OnAbortFunction { get; set; }
-    public SequenceTree<TSequenceContext, TSequenceData>? OnAnyFunction { get; set; }
-    public Dictionary<Func<object, bool>, SequenceTree<TSequenceContext, TSequenceData>> OnValueFunctions { get; set; } = [];
+    private readonly Func<TSequenceContext, TSequenceData, ValueTask<FunctionResult>> function;
+    private readonly string branchName;
+
+    public SequenceBranch(
+        Func<TSequenceContext, TSequenceData, ValueTask<FunctionResult>> function,
+        string? branchName = null)
+    {
+        this.function = function;
+        this.branchName = branchName ?? Guid.NewGuid().ToString();
+    }
+
+    public SequenceBranch<TSequenceContext, TSequenceData>? OnTrueFunction { get; set; }
+    public SequenceBranch<TSequenceContext, TSequenceData>? OnFalseFunction { get; set; }
+    public SequenceBranch<TSequenceContext, TSequenceData>? OnAbortFunction { get; set; }
+    public SequenceBranch<TSequenceContext, TSequenceData>? OnAnyFunction { get; set; }
+    public Dictionary<Func<object, bool>, SequenceBranch<TSequenceContext, TSequenceData>> OnValueFunctions { get; set; } = [];
+
+    public string GetFunctionName() => branchName;
 
     public async ValueTask<FunctionResult> Invoke(TSequenceContext sequenceContext, TSequenceData sequenceData)
     {
@@ -39,11 +51,11 @@ internal class SequenceTree<TSequenceContext, TSequenceData>(
         }
     }
 
-    private SequenceTree<TSequenceContext, TSequenceData>? GetOnValueContinuation(object value)
+    private SequenceBranch<TSequenceContext, TSequenceData>? GetOnValueContinuation(object result)
     {
         foreach (var onValueContinuations in OnValueFunctions)
         {
-            if (onValueContinuations.Key(value))
+            if (onValueContinuations.Key(result))
             {
                 return onValueContinuations.Value;
             }

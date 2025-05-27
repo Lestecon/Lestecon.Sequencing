@@ -9,9 +9,9 @@ public class FunctionClassTests
     [Fact]
     public async Task TrueResultEmpty()
     {
-        var context = new SequenceContext(Substitute.For<ILogger>());
+        var context = new DefaultSequenceContext(Substitute.For<ILogger>());
 
-        var sequence = SequenceBuilder.Create<SequenceContext, TestSequenceData>()
+        var sequence = SequenceBuilder.Create<DefaultSequenceContext, TestSequenceData>()
             .StartWith<TrueFunctionEmpty>()
                 .IfTrueRun<FalseFunctionEmpty>()
             .After<FalseFunctionEmpty10ms>()

@@ -2,13 +2,13 @@ using Lestecon.Sequencing.Abstraction;
 
 namespace Lestecon.Sequencing;
 
-public class SequenceBuilderBranch<TSequenceContext, TSequenceData>
+public class SequenceBranchDefinition<TSequenceContext, TSequenceData>
     where TSequenceContext : ISequenceContext
     where TSequenceData : ISequenceData
 {
     private readonly SequenceBuilder<TSequenceContext, TSequenceData> builder;
 
-    internal SequenceBuilderBranch(
+    internal SequenceBranchDefinition(
         SequenceBuilder<TSequenceContext, TSequenceData> builder)
     {
         this.builder = builder;
@@ -28,11 +28,11 @@ public class SequenceBuilderBranch<TSequenceContext, TSequenceData>
     /// Adds a function to the sequence using any properly defined method.
     /// The Method creates a sequence branch that will only be invoked when specified as a reaction to a result of another sequence function.
     /// </summary>
-    public SequenceBuilderBranch<TSequenceContext, TSequenceData> After(
+    public SequenceBranchDefinition<TSequenceContext, TSequenceData> After(
         Func<TSequenceContext, TSequenceData, ValueTask<FunctionResult>> function) =>
         builder.Register(function);
 
-    public SequenceBuilderBranch<TSequenceContext, TSequenceData> After(
+    public SequenceBranchDefinition<TSequenceContext, TSequenceData> After(
         Func<TSequenceContext, TSequenceData, ValueTask<FunctionResult>> function,
         string? functionName)
     {
@@ -45,26 +45,26 @@ public class SequenceBuilderBranch<TSequenceContext, TSequenceData>
     /// Adds a function to the sequence by defining a sequence function class to be instantiated.
     /// The Method creates a sequence branch that will only be invoked when specified as a reaction to a result of another sequence function.
     /// </summary>
-    public SequenceBuilderBranch<TSequenceContext, TSequenceData> After<TSequenceFunction>(
+    public SequenceBranchDefinition<TSequenceContext, TSequenceData> After<TSequenceFunction>(
         string? functionName = null)
         where TSequenceFunction : ISequenceFunction<TSequenceContext, TSequenceData>, new() =>
         builder.Register<TSequenceFunction>(functionName);
 
     /// <summary>Adds the specified sequence.</summary>
-    public SequenceBuilderBranch<TSequenceContext, TSequenceData> After(
+    public SequenceBranchDefinition<TSequenceContext, TSequenceData> After(
         ISequenceFunction<TSequenceContext, TSequenceData> sequence,
         string? functionName = null)
     {
         return sequence == null
             ? throw new ArgumentNullException(nameof(sequence))
-            : builder.Register(sequence.Invoke, sequence.FunctionName + (functionName ?? string.Empty));
+            : builder.Register(sequence.Invoke, sequence.GetFunctionName() + (functionName ?? string.Empty));
     }
 
     #endregion
 
     #region On True
 
-    public SequenceBuilderBranch<TSequenceContext, TSequenceData> IfTrueRun(
+    public SequenceBranchDefinition<TSequenceContext, TSequenceData> IfTrueRun(
         Func<TSequenceContext, TSequenceData, ValueTask<FunctionResult>> function,
         string? functionName = null)
     {
@@ -79,22 +79,23 @@ public class SequenceBuilderBranch<TSequenceContext, TSequenceData>
     /// Adds a reaction function to the sequence branch by defining a sequence function class to be instantiated.
     /// The specified function will be called only if the parent function's result type is "True".
     /// </summary>
-    public SequenceBuilderBranch<TSequenceContext, TSequenceData> IfTrueRun<TSequenceFunction>(
+    public SequenceBranchDefinition<TSequenceContext, TSequenceData> IfTrueRun<TSequenceFunction>(
         string? functionName = null)
         where TSequenceFunction : ISequenceFunction<TSequenceContext, TSequenceData>, new()
     {
+        var sequenceFunction = new TSequenceFunction();
         builder.Register<TSequenceFunction>(functionName);
-        OnTrueFunctionName = typeof(TSequenceFunction).Name + (functionName ?? string.Empty);
+        OnTrueFunctionName = sequenceFunction.GetFunctionName() + (functionName ?? string.Empty);
         return this;
     }
 
-    public SequenceBuilderBranch<TSequenceContext, TSequenceData> IfTrueRun(
+    public SequenceBranchDefinition<TSequenceContext, TSequenceData> IfTrueRun(
         ISequenceFunction<TSequenceContext, TSequenceData> sequence,
         string? functionName = null)
     {
         ArgumentNullException.ThrowIfNull(sequence);
 
-        OnTrueFunctionName = sequence.FunctionName + (functionName ?? string.Empty);
+        OnTrueFunctionName = sequence.GetFunctionName() + (functionName ?? string.Empty);
         builder.Register(sequence.Invoke, OnTrueFunctionName);
         return this;
     }
@@ -103,7 +104,7 @@ public class SequenceBuilderBranch<TSequenceContext, TSequenceData>
 
     #region On False
 
-    public SequenceBuilderBranch<TSequenceContext, TSequenceData> IfFalseRun(
+    public SequenceBranchDefinition<TSequenceContext, TSequenceData> IfFalseRun(
         Func<TSequenceContext, TSequenceData, ValueTask<FunctionResult>> function,
         string? functionName = null)
     {
@@ -118,22 +119,23 @@ public class SequenceBuilderBranch<TSequenceContext, TSequenceData>
     /// Adds a reaction function to the sequence branch by defining a sequence function class to be instantiated.
     /// The specified function will be called only if the parent function's result type is "False".
     /// </summary>
-    public SequenceBuilderBranch<TSequenceContext, TSequenceData> IfFalseRun<TSequenceFunction>(
+    public SequenceBranchDefinition<TSequenceContext, TSequenceData> IfFalseRun<TSequenceFunction>(
         string? functionName = null)
         where TSequenceFunction : ISequenceFunction<TSequenceContext, TSequenceData>, new()
     {
+        var sequenceFunction = new TSequenceFunction();
         builder.Register<TSequenceFunction>(functionName);
-        OnFalseFunctionName = typeof(TSequenceFunction).Name + (functionName ?? string.Empty);
+        OnFalseFunctionName = sequenceFunction.GetFunctionName() + (functionName ?? string.Empty);
         return this;
     }
 
-    public SequenceBuilderBranch<TSequenceContext, TSequenceData> IfFalseRun(
+    public SequenceBranchDefinition<TSequenceContext, TSequenceData> IfFalseRun(
         ISequenceFunction<TSequenceContext, TSequenceData> sequence,
         string? functionName = null)
     {
         ArgumentNullException.ThrowIfNull(sequence);
 
-        OnFalseFunctionName = sequence.FunctionName + (functionName ?? string.Empty);
+        OnFalseFunctionName = sequence.GetFunctionName() + (functionName ?? string.Empty);
         builder.Register(sequence.Invoke, OnFalseFunctionName);
         return this;
     }
@@ -142,7 +144,7 @@ public class SequenceBuilderBranch<TSequenceContext, TSequenceData>
 
     #region On Abort
 
-    public SequenceBuilderBranch<TSequenceContext, TSequenceData> IfAbortRun(
+    public SequenceBranchDefinition<TSequenceContext, TSequenceData> IfAbortRun(
         Func<TSequenceContext, TSequenceData, ValueTask<FunctionResult>> function,
         string? functionName = null)
     {
@@ -157,22 +159,23 @@ public class SequenceBuilderBranch<TSequenceContext, TSequenceData>
     /// Adds a reaction function to the sequence branch by defining a sequence function class to be instantiated.
     /// The specified function will be called only if the parent function's result type is "Abort".
     /// </summary>
-    public SequenceBuilderBranch<TSequenceContext, TSequenceData> IfAbortRun<TSequenceFunction>(
+    public SequenceBranchDefinition<TSequenceContext, TSequenceData> IfAbortRun<TSequenceFunction>(
         string? functionName = null)
         where TSequenceFunction : ISequenceFunction<TSequenceContext, TSequenceData>, new()
     {
+        var sequenceFunction = new TSequenceFunction();
         builder.Register<TSequenceFunction>(functionName);
-        OnAbortFunctionName = typeof(TSequenceFunction).Name + (functionName ?? string.Empty);
+        OnAbortFunctionName = sequenceFunction.GetFunctionName() + (functionName ?? string.Empty);
         return this;
     }
 
-    public SequenceBuilderBranch<TSequenceContext, TSequenceData> IfAbortRun(
+    public SequenceBranchDefinition<TSequenceContext, TSequenceData> IfAbortRun(
         ISequenceFunction<TSequenceContext, TSequenceData> sequence,
         string? functionName = null)
     {
         ArgumentNullException.ThrowIfNull(sequence);
 
-        OnAbortFunctionName = sequence.FunctionName + (functionName ?? string.Empty);
+        OnAbortFunctionName = sequence.GetFunctionName() + (functionName ?? string.Empty);
         builder.Register(sequence.Invoke, OnAbortFunctionName);
         return this;
     }
@@ -185,7 +188,7 @@ public class SequenceBuilderBranch<TSequenceContext, TSequenceData>
     /// Adds a reaction function to the sequence branch using any properly defined method.
     /// The specified function will be called only if the parent function's result type is "Value".
     /// </summary>
-    public SequenceBuilderBranch<TSequenceContext, TSequenceData> IfValueRun(
+    public SequenceBranchDefinition<TSequenceContext, TSequenceData> IfValueRun(
         Func<object, bool> predicate,
         Func<TSequenceContext, TSequenceData, ValueTask<FunctionResult>> function,
         string? functionName = null)
@@ -201,22 +204,23 @@ public class SequenceBuilderBranch<TSequenceContext, TSequenceData>
     /// Adds a reaction function to the sequence branch by defining a sequence function class to be instantiated.
     /// The specified function will be called only if the parent function's result type is "Value".
     /// </summary>
-    public SequenceBuilderBranch<TSequenceContext, TSequenceData> IfValueRun<TSequenceFunction>(
+    public SequenceBranchDefinition<TSequenceContext, TSequenceData> IfValueRun<TSequenceFunction>(
         Func<object, bool> predicate,
         string? functionName = null)
         where TSequenceFunction : ISequenceFunction<TSequenceContext, TSequenceData>, new()
     {
+        var sequenceFunction = new TSequenceFunction();
         builder.Register<TSequenceFunction>(functionName);
-        OnValueFunctionNames[predicate] = typeof(TSequenceFunction).Name + (functionName ?? string.Empty);
+        OnValueFunctionNames[predicate] = sequenceFunction.GetFunctionName() + (functionName ?? string.Empty);
         return this;
     }
 
-    public SequenceBuilderBranch<TSequenceContext, TSequenceData> IfValueRun<TSequenceFunction>(
+    public SequenceBranchDefinition<TSequenceContext, TSequenceData> IfValueRun<TSequenceFunction>(
         string? functionName = null)
         where TSequenceFunction : ISequenceFunction<TSequenceContext, TSequenceData>, new() =>
         IfValueRun<TSequenceFunction>(x => true, functionName);
 
-    public SequenceBuilderBranch<TSequenceContext, TSequenceData> IfValueElseRun(
+    public SequenceBranchDefinition<TSequenceContext, TSequenceData> IfValueElseRun(
         Func<TSequenceContext, TSequenceData, ValueTask<FunctionResult>> function,
         string? functionName = null) =>
         IfValueRun(x => true, function, functionName);
@@ -229,7 +233,7 @@ public class SequenceBuilderBranch<TSequenceContext, TSequenceData>
     /// Adds a reaction function to the sequence branch using any properly defined method.
     /// The specified function will be called on any parent function result type.
     /// </summary>
-    public SequenceBuilderBranch<TSequenceContext, TSequenceData> IfAnyRun(
+    public SequenceBranchDefinition<TSequenceContext, TSequenceData> IfAnyRun(
         Func<TSequenceContext, TSequenceData, ValueTask<FunctionResult>> function)
     {
         builder.Register(function);
@@ -237,7 +241,7 @@ public class SequenceBuilderBranch<TSequenceContext, TSequenceData>
         return this;
     }
 
-    public SequenceBuilderBranch<TSequenceContext, TSequenceData> IfAnyRun(
+    public SequenceBranchDefinition<TSequenceContext, TSequenceData> IfAnyRun(
         Func<TSequenceContext, TSequenceData, ValueTask<FunctionResult>> function,
         string functionName)
     {
@@ -250,22 +254,23 @@ public class SequenceBuilderBranch<TSequenceContext, TSequenceData>
     /// Adds a reaction function to the sequence branch by defining a sequence function class to be instantiated.
     /// The specified function will be called on any parent function result type.
     /// </summary>
-    public SequenceBuilderBranch<TSequenceContext, TSequenceData> IfAnyRun<TSequenceFunction>(
+    public SequenceBranchDefinition<TSequenceContext, TSequenceData> IfAnyRun<TSequenceFunction>(
         string? functionName = null)
         where TSequenceFunction : ISequenceFunction<TSequenceContext, TSequenceData>, new()
     {
+        var sequenceFunction = new TSequenceFunction();
         builder.Register<TSequenceFunction>(functionName);
-        OnAnyFunctionName = typeof(TSequenceFunction).Name + (functionName ?? string.Empty);
+        OnAnyFunctionName = sequenceFunction.GetFunctionName() + (functionName ?? string.Empty);
         return this;
     }
 
-    public SequenceBuilderBranch<TSequenceContext, TSequenceData> IfAnyRun(
+    public SequenceBranchDefinition<TSequenceContext, TSequenceData> IfAnyRun(
         ISequenceFunction<TSequenceContext, TSequenceData> sequence,
         string? functionName = null)
     {
         ArgumentNullException.ThrowIfNull(sequence);
 
-        OnAnyFunctionName = sequence.FunctionName + (functionName ?? string.Empty);
+        OnAnyFunctionName = sequence.GetFunctionName() + (functionName ?? string.Empty);
         builder.Register(sequence.Invoke, OnAnyFunctionName);
         return this;
     }

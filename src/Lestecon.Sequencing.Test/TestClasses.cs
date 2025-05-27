@@ -5,9 +5,9 @@ namespace Lestecon.Sequencing.Test;
 
 #region True
 
-internal class TrueFunctionEmpty10ms : ISequenceFunction<SequenceContext, TestSequenceData>
+internal class TrueFunctionEmpty10ms : ISequenceFunction<DefaultSequenceContext, TestSequenceData>
 {
-    public async ValueTask<IFunctionResult> Invoke(SequenceContext sequenceContext, TestSequenceData sequenceData)
+    public async ValueTask<FunctionResult> Invoke(DefaultSequenceContext sequenceContext, TestSequenceData sequenceData)
     {
         await Task.Delay(10);
 
@@ -15,35 +15,35 @@ internal class TrueFunctionEmpty10ms : ISequenceFunction<SequenceContext, TestSe
     }
 }
 
-internal class TrueFunctionEmpty : ISequenceFunction<SequenceContext, TestSequenceData>
+internal class TrueFunctionEmpty : ISequenceFunction<DefaultSequenceContext, TestSequenceData>
 {
-    public ValueTask<IFunctionResult> Invoke(SequenceContext sequenceContext, TestSequenceData sequenceData) =>
+    public ValueTask<FunctionResult> Invoke(DefaultSequenceContext sequenceContext, TestSequenceData sequenceData) =>
         FunctionResult.True();
 }
 
-internal class TrueFunctionWithValue10ms : ISequenceFunction<SequenceContext, TestSequenceData>
+internal class TrueFunctionWithValue10ms : ISequenceFunction<DefaultSequenceContext, TestSequenceData>
 {
-    public async ValueTask<IFunctionResult> Invoke(SequenceContext sequenceContext, TestSequenceData sequenceData)
+    public async ValueTask<FunctionResult> Invoke(DefaultSequenceContext sequenceContext, TestSequenceData sequenceData)
     {
         await Task.Delay(10);
 
-        return FunctionResult.True().WithValue(new TestObjectDto());
+        return FunctionResult.True(new TestObjectDto());
     }
 }
 
-internal class TrueFunctionWithValue : ISequenceFunction<SequenceContext, TestSequenceData>
+internal class TrueFunctionWithValue : ISequenceFunction<DefaultSequenceContext, TestSequenceData>
 {
-    public ValueTask<IFunctionResult> Invoke(SequenceContext sequenceContext, TestSequenceData sequenceData) =>
-        FunctionResult.True().WithValue(new TestObjectDto());
+    public ValueTask<FunctionResult> Invoke(DefaultSequenceContext sequenceContext, TestSequenceData sequenceData) =>
+        FunctionResult.True(new TestObjectDto());
 }
 
 #endregion
 
 #region False
 
-internal class FalseFunctionEmpty10ms : ISequenceFunction<SequenceContext, TestSequenceData>
+internal class FalseFunctionEmpty10ms : ISequenceFunction<DefaultSequenceContext, TestSequenceData>
 {
-    public async ValueTask<IFunctionResult> Invoke(SequenceContext sequenceContext, TestSequenceData sequenceData)
+    public async ValueTask<FunctionResult> Invoke(DefaultSequenceContext sequenceContext, TestSequenceData sequenceData)
     {
         await Task.Delay(10);
 
@@ -51,34 +51,34 @@ internal class FalseFunctionEmpty10ms : ISequenceFunction<SequenceContext, TestS
     }
 }
 
-internal class FalseFunctionEmpty : ISequenceFunction<SequenceContext, TestSequenceData>
+internal class FalseFunctionEmpty : ISequenceFunction<DefaultSequenceContext, TestSequenceData>
 {
-    public ValueTask<IFunctionResult> Invoke(SequenceContext sequenceContext, TestSequenceData sequenceData) => FunctionResult.False();
+    public ValueTask<FunctionResult> Invoke(DefaultSequenceContext sequenceContext, TestSequenceData sequenceData) => FunctionResult.False();
 }
 
-internal class FalseFunctionWithValue10ms : ISequenceFunction<SequenceContext, TestSequenceData>
+internal class FalseFunctionWithValue10ms : ISequenceFunction<DefaultSequenceContext, TestSequenceData>
 {
-    public async ValueTask<IFunctionResult> Invoke(SequenceContext sequenceContext, TestSequenceData sequenceData)
+    public async ValueTask<FunctionResult> Invoke(DefaultSequenceContext sequenceContext, TestSequenceData sequenceData)
     {
         await Task.Delay(10);
 
-        return FunctionResult.False().WithValue(new TestObjectDto());
+        return FunctionResult.False(new TestObjectDto());
     }
 }
 
-internal class FalseFunctionWithValue : ISequenceFunction<SequenceContext, TestSequenceData>
+internal class FalseFunctionWithValue : ISequenceFunction<DefaultSequenceContext, TestSequenceData>
 {
-    public ValueTask<IFunctionResult> Invoke(SequenceContext sequenceContext, TestSequenceData sequenceData) =>
-        FunctionResult.False().WithValue(new TestObjectDto());
+    public ValueTask<FunctionResult> Invoke(DefaultSequenceContext sequenceContext, TestSequenceData sequenceData) =>
+        FunctionResult.False(new TestObjectDto());
 }
 
 #endregion
 
 #region Abort
 
-internal class AbortFunctionEmpty10ms : ISequenceFunction<SequenceContext, TestSequenceData>
+internal class AbortFunctionEmpty10ms : ISequenceFunction<DefaultSequenceContext, TestSequenceData>
 {
-    public async ValueTask<IFunctionResult> Invoke(SequenceContext sequenceContext, TestSequenceData sequenceData)
+    public async ValueTask<FunctionResult> Invoke(DefaultSequenceContext sequenceContext, TestSequenceData sequenceData)
     {
         await Task.Delay(10);
 
@@ -86,60 +86,60 @@ internal class AbortFunctionEmpty10ms : ISequenceFunction<SequenceContext, TestS
     }
 }
 
-internal class AbortFunctionEmpty : ISequenceFunction<SequenceContext, TestSequenceData>
+internal class AbortFunctionEmpty : ISequenceFunction<DefaultSequenceContext, TestSequenceData>
 {
-    public ValueTask<IFunctionResult> Invoke(SequenceContext sequenceContext, TestSequenceData sequenceData) => FunctionResult.Abort();
+    public ValueTask<FunctionResult> Invoke(DefaultSequenceContext sequenceContext, TestSequenceData sequenceData) => FunctionResult.Abort();
 }
 
-internal class AbortFunctionWithValue10ms : ISequenceFunction<SequenceContext, TestSequenceData>
+internal class AbortFunctionWithValue10ms : ISequenceFunction<DefaultSequenceContext, TestSequenceData>
 {
-    public async ValueTask<IFunctionResult> Invoke(SequenceContext sequenceContext, TestSequenceData sequenceData)
+    public async ValueTask<FunctionResult> Invoke(DefaultSequenceContext sequenceContext, TestSequenceData sequenceData)
     {
         await Task.Delay(10);
 
-        return FunctionResult.Abort().WithValue(new TestObjectDto());
+        return FunctionResult.Abort(new TestObjectDto());
     }
 }
 
-internal class AbortFunctionWithValue : ISequenceFunction<SequenceContext, TestSequenceData>
+internal class AbortFunctionWithValue : ISequenceFunction<DefaultSequenceContext, TestSequenceData>
 {
-    public ValueTask<IFunctionResult> Invoke(SequenceContext sequenceContext, TestSequenceData sequenceData) =>
-        FunctionResult.Abort().WithValue(new TestObjectDto());
+    public ValueTask<FunctionResult> Invoke(DefaultSequenceContext sequenceContext, TestSequenceData sequenceData) =>
+        FunctionResult.Abort(new TestObjectDto());
 }
 
 #endregion
 
-#region Ambivalent
+#region Indeterminate
 
-internal class AmbivalentFunctionEmpty10ms : ISequenceFunction<SequenceContext, TestSequenceData>
+internal class IndeterminateFunctionEmpty10ms : ISequenceFunction<DefaultSequenceContext, TestSequenceData>
 {
-    public async ValueTask<IFunctionResult> Invoke(SequenceContext sequenceContext, TestSequenceData sequenceData)
+    public async ValueTask<FunctionResult> Invoke(DefaultSequenceContext sequenceContext, TestSequenceData sequenceData)
     {
         await Task.Delay(10);
 
-        return FunctionResult.Ambivalent();
+        return FunctionResult.Indeterminate();
     }
 }
 
-internal class AmbivalentFunctionEmpty : ISequenceFunction<SequenceContext, TestSequenceData>
+internal class IndeterminateFunctionEmpty : ISequenceFunction<DefaultSequenceContext, TestSequenceData>
 {
-    public ValueTask<IFunctionResult> Invoke(SequenceContext sequenceContext, TestSequenceData sequenceData) => FunctionResult.Ambivalent();
+    public ValueTask<FunctionResult> Invoke(DefaultSequenceContext sequenceContext, TestSequenceData sequenceData) => FunctionResult.Indeterminate();
 }
 
-internal class AmbivalentFunctionWithValue10ms : ISequenceFunction<SequenceContext, TestSequenceData>
+internal class IndeterminateFunctionWithValue10ms : ISequenceFunction<DefaultSequenceContext, TestSequenceData>
 {
-    public async ValueTask<IFunctionResult> Invoke(SequenceContext sequenceContext, TestSequenceData sequenceData)
+    public async ValueTask<FunctionResult> Invoke(DefaultSequenceContext sequenceContext, TestSequenceData sequenceData)
     {
         await Task.Delay(10);
 
-        return FunctionResult.Ambivalent().WithValue(new TestObjectDto());
+        return FunctionResult.Indeterminate(new TestObjectDto());
     }
 }
 
-internal class AmbivalentFunctionWithValue : ISequenceFunction<SequenceContext, TestSequenceData>
+internal class IndeterminateFunctionWithValue : ISequenceFunction<DefaultSequenceContext, TestSequenceData>
 {
-    public ValueTask<IFunctionResult> Invoke(SequenceContext sequenceContext, TestSequenceData sequenceData) =>
-        FunctionResult.Ambivalent().WithValue(new TestObjectDto());
+    public ValueTask<FunctionResult> Invoke(DefaultSequenceContext sequenceContext, TestSequenceData sequenceData) =>
+        FunctionResult.Indeterminate(new TestObjectDto());
 }
 
 #endregion
